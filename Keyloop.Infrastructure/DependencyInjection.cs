@@ -1,10 +1,12 @@
 ﻿using Keyloop.Application.Abstractions;
 using Keyloop.Application.Abstractions.Persistence;
+using Keyloop.Application.Abstractions.Scheduler;
 using Keyloop.Infrastructure.Identity;
 using Keyloop.Infrastructure.Persistence.Context;
 using Keyloop.Infrastructure.Persistence.Interceptors;
 using Keyloop.Infrastructure.Persistence.Queries;
 using Keyloop.Infrastructure.Persistence.Repositories;
+using Keyloop.Infrastructure.Persistence.Scheduler;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,6 +34,7 @@ public static class DependencyInjection
         services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<ISqlQueryExecutor, DapperSqlQueryExecutor>();
+        services.AddScoped<IAppointmentScheduler, AppointmentScheduler>();
 
         return services;
     }

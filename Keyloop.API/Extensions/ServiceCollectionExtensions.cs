@@ -1,4 +1,5 @@
 ﻿using Keyloop.API.Handlers;
+using Keyloop.API.HostedServices;
 using Keyloop.API.Services;
 using Keyloop.Application;
 using Keyloop.Application.Abstractions;
@@ -20,6 +21,7 @@ public static class ServiceCollectionExtensions
 
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
+        services.AddHostedService<DatabaseInitializationHostedService>();
 
         services.AddControllers();
         services.AddApiVersioning(options =>

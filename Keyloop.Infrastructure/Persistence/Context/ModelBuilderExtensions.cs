@@ -6,6 +6,22 @@ namespace Keyloop.Infrastructure.Persistence.Context;
 
 internal static class ModelBuilderExtensions
 {
+    public static void ApplyAuditableFieldLengths(this ModelBuilder modelBuilder)
+    {
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            if (!typeof(IAuditableEntity).IsAssignableFrom(entityType.ClrType))
+                continue;
+
+            var builder = modelBuilder.Entity(entityType.ClrType);
+            builder.Property(nameof(IAuditableEntity.CreatedBy)).HasMaxLength(256);
+            builder.Property(nameof(IAuditableEntity.UpdatedBy)).HasMaxLength(256);
+
+            if (typeof(ISoftDeletable).IsAssignableFrom(entityType.ClrType))
+                builder.Property(nameof(ISoftDeletable.DeletedBy)).HasMaxLength(256);
+        }
+    }
+
     public static void ApplySoftDeleteQueryFilters(this ModelBuilder modelBuilder)
     {
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())

@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using FluentValidation;
+using Keyloop.Domain.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -22,6 +24,31 @@ public sealed class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior
             var response = await next();
             logger.LogInformation("Handled {RequestName} in {ElapsedMilliseconds} ms", requestName, stopwatch.ElapsedMilliseconds);
             return response;
+        }
+        catch (ValidationException)
+        {
+            logger.LogWarning(
+                "Rejected {RequestName} after {ElapsedMilliseconds} ms with validation errors",
+                requestName,
+                stopwatch.ElapsedMilliseconds);
+            throw;
+        }
+        catch (DomainException exception)
+        {
+            logger.LogWarning(
+                "Rejected {RequestName} after {ElapsedMilliseconds} ms with {Code}",
+                requestName,
+                stopwatch.ElapsedMilliseconds,
+                exception.Code);
+            throw;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            logger.LogWarning(
+                "Rejected {RequestName} after {ElapsedMilliseconds} ms due to invalid credentials",
+                requestName,
+                stopwatch.ElapsedMilliseconds);
+            throw;
         }
         catch (Exception exception)
         {

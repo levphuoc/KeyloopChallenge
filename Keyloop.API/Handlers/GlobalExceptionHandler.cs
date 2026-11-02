@@ -45,6 +45,12 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
                 ex.Message,
                 WithCode(ex)),
 
+            SlotUnavailableException ex => (
+                StatusCodes.Status409Conflict,
+                "Slot unavailable",
+                ex.Message,
+                WithCode(ex)),
+
             ConflictException ex => (
                 StatusCodes.Status409Conflict,
                 "Conflict",

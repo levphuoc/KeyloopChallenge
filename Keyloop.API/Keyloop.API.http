@@ -1,0 +1,75 @@
+@host = https://localhost:7054
+@dealershipId = 1
+@vehicleId = 1
+@serviceTypeId = 1
+@customerId = 1
+
+### Login as the seeded demo advisor
+# @name login
+POST {{host}}/api/v1/authentication/login
+Content-Type: application/json
+
+{
+  "email": "demo@keyloop.local",
+  "password": "Demo123!ChangeMe"
+}
+
+### Login as the configured administrator
+POST {{host}}/api/v1/authentication/login
+Content-Type: application/json
+
+{
+  "email": "admin@keyloop.local",
+  "password": "Admin123!ChangeMe"
+}
+
+@token = {{login.response.body.$.accessToken}}
+
+### Health: liveness
+GET {{host}}/health/live
+
+### Health: readiness (includes SQL Server)
+GET {{host}}/health/ready
+
+### List dealerships
+GET {{host}}/api/v1/dealerships
+Authorization: Bearer {{token}}
+
+### List service types
+GET {{host}}/api/v1/servicetypes
+Authorization: Bearer {{token}}
+
+### List customers
+GET {{host}}/api/v1/customers
+Authorization: Bearer {{token}}
+
+### List vehicles for a customer
+GET {{host}}/api/v1/customers/{{customerId}}/vehicles
+Authorization: Bearer {{token}}
+
+### Availability for a future working day (update the date)
+GET {{host}}/api/v1/dealerships/{{dealershipId}}/availability?serviceTypeId={{serviceTypeId}}&date=2026-11-03
+Authorization: Bearer {{token}}
+
+### Create an appointment (update the date and time)
+# @name createAppointment
+POST {{host}}/api/v1/appointments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "customerId": {{customerId}},
+  "vehicleId": {{vehicleId}},
+  "dealershipId": {{dealershipId}},
+  "serviceTypeId": {{serviceTypeId}},
+  "startTime": "2026-11-03T10:00:00+07:00"
+}
+
+### Get the appointment created above
+@appointmentId = {{createAppointment.response.body.$.id}}
+GET {{host}}/api/v1/appointments/{{appointmentId}}
+Authorization: Bearer {{token}}
+
+### Cancel the appointment created above
+POST {{host}}/api/v1/appointments/{{appointmentId}}/cancel
+Authorization: Bearer {{token}}

@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Serilog;
 
 namespace Keyloop.API.Extensions;
 
@@ -6,8 +7,11 @@ public static class WebApplicationExtensions
 {
     public static WebApplication UseApiPipeline(this WebApplication app)
     {
-        app.UseExceptionHandler();
+        // Request logging wraps the exception handler so handled domain
+        // rejections (for example 409 conflicts) are logged with their real
+        // status code instead of a transient 500.
         app.UseSerilogRequestLogging();
+        app.UseExceptionHandler();
 
         if (app.Environment.IsDevelopment())
         {
@@ -18,7 +22,15 @@ public static class WebApplicationExtensions
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-        app.MapHealthChecks("/health");
+
+        var readyHealthCheck = new HealthCheckOptions
+        {
+            Predicate = check => check.Tags.Contains("ready")
+        };
+
+        app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false });
+        app.MapHealthChecks("/health/ready", readyHealthCheck);
+        app.MapHealthChecks("/health", readyHealthCheck);
 
         return app;
     }

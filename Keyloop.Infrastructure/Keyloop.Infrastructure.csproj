@@ -26,6 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="Keyloop.UnitTests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Persistence\Configurations\" />
     <Folder Include="Persistence\Migrations\" />
   </ItemGroup>

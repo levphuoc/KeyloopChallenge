@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="14.2.0" />
+    <PackageReference Include="FluentValidation" Version="12.2.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.2.0" />
+    <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="Mapster.DependencyInjection" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Keyloop.Domain\Keyloop.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\" />
+    <Folder Include="DTOs\" />
+  </ItemGroup>
+
+</Project>

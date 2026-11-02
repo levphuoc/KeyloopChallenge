@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36717.8 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keyloop.API", "Keyloop.API\Keyloop.API.csproj", "{0544384B-F2E8-4526-B3C5-DD89F4538294}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keyloop.Domain", "Keyloop.Domain\Keyloop.Domain.csproj", "{5491D990-BD93-41F1-8864-E007304DA0B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keyloop.Infrastructure", "Keyloop.Infrastructure\Keyloop.Infrastructure.csproj", "{54338371-B808-4C3C-B294-D1320530B509}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keyloop.Application", "Keyloop.Application\Keyloop.Application.csproj", "{815A464F-42B2-433A-A421-A467C4A9CBE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keyloop.Web", "Keyloop.Web\Keyloop.Web.csproj", "{DBF8D158-0AE4-433B-9EE2-22F062DF9A35}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keyloop.UnitTests", "Keyloop.UnitTests\Keyloop.UnitTests.csproj", "{6766D97F-C791-44B7-9A38-10D92048FA94}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0544384B-F2E8-4526-B3C5-DD89F4538294}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0544384B-F2E8-4526-B3C5-DD89F4538294}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0544384B-F2E8-4526-B3C5-DD89F4538294}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0544384B-F2E8-4526-B3C5-DD89F4538294}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5491D990-BD93-41F1-8864-E007304DA0B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5491D990-BD93-41F1-8864-E007304DA0B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5491D990-BD93-41F1-8864-E007304DA0B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5491D990-BD93-41F1-8864-E007304DA0B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54338371-B808-4C3C-B294-D1320530B509}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54338371-B808-4C3C-B294-D1320530B509}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54338371-B808-4C3C-B294-D1320530B509}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54338371-B808-4C3C-B294-D1320530B509}.Release|Any CPU.Build.0 = Release|Any CPU
+		{815A464F-42B2-433A-A421-A467C4A9CBE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{815A464F-42B2-433A-A421-A467C4A9CBE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{815A464F-42B2-433A-A421-A467C4A9CBE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{815A464F-42B2-433A-A421-A467C4A9CBE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBF8D158-0AE4-433B-9EE2-22F062DF9A35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBF8D158-0AE4-433B-9EE2-22F062DF9A35}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBF8D158-0AE4-433B-9EE2-22F062DF9A35}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBF8D158-0AE4-433B-9EE2-22F062DF9A35}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6766D97F-C791-44B7-9A38-10D92048FA94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6766D97F-C791-44B7-9A38-10D92048FA94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6766D97F-C791-44B7-9A38-10D92048FA94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6766D97F-C791-44B7-9A38-10D92048FA94}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {46488437-A75D-4FD3-A7E6-B8787D43CB9F}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <!--
+      The solution targets .NET 9. Allow it to run on a newer installed runtime
+      (for example .NET 10) so local build, test and run do not require a
+      side-by-side .NET 9 runtime installation.
+    -->
+    <RollForward>LatestMajor</RollForward>
+  </PropertyGroup>
+</Project>

@@ -25,9 +25,11 @@ public static class DependencyInjection
 
         services.AddDbContext<AppDbContext>((provider, options) =>
         {
-            options.UseSqlServer(
-                configuration.GetConnectionString("DefaultConnection"),
-                sql => sql.EnableRetryOnFailure());
+            // Transactions are opened explicitly by the unit of work and the
+            // seeder. Keep the provider's default (non-retrying) execution
+            // strategy so those transactions remain valid; transient-failure
+            // retries belong at the gateway/HTTP layer for this scope.
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             options.AddInterceptors(provider.GetRequiredService<AuditableEntityInterceptor>());
         });
 

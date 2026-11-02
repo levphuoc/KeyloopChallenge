@@ -14,9 +14,7 @@ public static class DbContextFactoryServiceCollectionExtensions
     {
         services.AddDbContextFactory<AppDbContext>((provider, options) =>
         {
-            options.UseSqlServer(
-                configuration.GetConnectionString("DefaultConnection"),
-                sql => sql.EnableRetryOnFailure());
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             options.AddInterceptors(provider.GetRequiredService<AuditableEntityInterceptor>());
         }, ServiceLifetime.Scoped);
 

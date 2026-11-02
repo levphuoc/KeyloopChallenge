@@ -15,6 +15,14 @@ public sealed class Appointment : AuditableEntity
     public DateTime StartUtc { get; private set; }
     public DateTime EndUtc { get; private set; }
     public AppointmentStatus Status { get; private set; } = AppointmentStatus.Confirmed;
+
+    public Customer Customer { get; private set; } = null!;
+    public Vehicle Vehicle { get; private set; } = null!;
+    public Dealership Dealership { get; private set; } = null!;
+    public ServiceType ServiceType { get; private set; } = null!;
+    public Technician Technician { get; private set; } = null!;
+    public ServiceBay ServiceBay { get; private set; } = null!;
+
     private Appointment() { }
     public static Appointment Create(int customerId, int vehicleId, int dealershipId, int serviceTypeId, int technicianId, int serviceBayId, TimeInterval interval) => new()
     { CustomerId = customerId, VehicleId = vehicleId, DealershipId = dealershipId, ServiceTypeId = serviceTypeId, TechnicianId = technicianId, ServiceBayId = serviceBayId, StartUtc = interval.StartUtc, EndUtc = interval.EndUtc };

@@ -22,6 +22,9 @@ public sealed class DealershipsController(ISender sender) : ApiControllerBase
         [FromQuery] DateOnly? date,
         CancellationToken cancellationToken) =>
         Ok(await sender.Send(
-            new GetAvailabilityQuery(id, serviceTypeId, date ?? DateOnly.FromDateTime(DateTime.Today)),
+            new GetAvailabilityQuery(
+                id,
+                serviceTypeId,
+                date ?? DateOnly.FromDateTime(DateTime.Today).AddDays(1)),
             cancellationToken));
 }

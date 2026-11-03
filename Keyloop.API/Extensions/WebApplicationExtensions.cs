@@ -16,6 +16,14 @@ public static class WebApplicationExtensions
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
+            app.UseSwaggerUI(options =>
+            {
+                options.RoutePrefix = "swagger";
+                options.SwaggerEndpoint("/openapi/v1.json", "Keyloop API v1");
+                options.DocumentTitle = "Keyloop API";
+                options.DisplayRequestDuration();
+            });
+            app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
         }
 
         app.UseHttpsRedirection();

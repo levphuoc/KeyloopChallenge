@@ -10,20 +10,10 @@
     }
   ],
   "paths": {
-    "/api/v{version}/Appointments": {
+    "/api/v1/Appointments": {
       "post": {
         "tags": [
           "Appointments"
-        ],
-        "parameters": [
-          {
-            "name": "version",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
         ],
         "requestBody": {
           "content": {
@@ -96,10 +86,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
-    "/api/v{version}/Appointments/{id}": {
+    "/api/v1/Appointments/{id}": {
       "get": {
         "tags": [
           "Appointments"
@@ -113,14 +108,6 @@
               "type": "string",
               "format": "uuid"
             }
-          },
-          {
-            "name": "version",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -164,10 +151,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
-    "/api/v{version}/Appointments/{id}/cancel": {
+    "/api/v1/Appointments/{id}/cancel": {
       "post": {
         "tags": [
           "Appointments"
@@ -181,14 +173,6 @@
               "type": "string",
               "format": "uuid"
             }
-          },
-          {
-            "name": "version",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -232,23 +216,18 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
-    "/api/v{version}/Authentication/register": {
+    "/api/v1/Authentication/register": {
       "post": {
         "tags": [
           "Authentication"
-        ],
-        "parameters": [
-          {
-            "name": "version",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
         ],
         "requestBody": {
           "content": {
@@ -302,20 +281,10 @@
         }
       }
     },
-    "/api/v{version}/Authentication/login": {
+    "/api/v1/Authentication/login": {
       "post": {
         "tags": [
           "Authentication"
-        ],
-        "parameters": [
-          {
-            "name": "version",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
         ],
         "requestBody": {
           "content": {
@@ -369,20 +338,10 @@
         }
       }
     },
-    "/api/v{version}/Authentication/me": {
+    "/api/v1/Authentication/me": {
       "get": {
         "tags": [
           "Authentication"
-        ],
-        "parameters": [
-          {
-            "name": "version",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
         ],
         "responses": {
           "400": {
@@ -405,23 +364,18 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
-    "/api/v{version}/Customers": {
+    "/api/v1/Customers": {
       "get": {
         "tags": [
           "Customers"
-        ],
-        "parameters": [
-          {
-            "name": "version",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
         ],
         "responses": {
           "400": {
@@ -457,10 +411,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
-    "/api/v{version}/Customers/{id}/vehicles": {
+    "/api/v1/Customers/{id}/vehicles": {
       "get": {
         "tags": [
           "Customers"
@@ -473,14 +432,6 @@
             "schema": {
               "type": "integer",
               "format": "int32"
-            }
-          },
-          {
-            "name": "version",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -528,23 +479,18 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
-    "/api/v{version}/Dealerships": {
+    "/api/v1/Dealerships": {
       "get": {
         "tags": [
           "Dealerships"
-        ],
-        "parameters": [
-          {
-            "name": "version",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
         ],
         "responses": {
           "400": {
@@ -580,10 +526,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
-    "/api/v{version}/Dealerships/{id}/availability": {
+    "/api/v1/Dealerships/{id}/availability": {
       "get": {
         "tags": [
           "Dealerships"
@@ -612,14 +563,6 @@
             "schema": {
               "type": "string",
               "format": "date"
-            }
-          },
-          {
-            "name": "version",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -667,23 +610,18 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
-    "/api/v{version}/ServiceTypes": {
+    "/api/v1/ServiceTypes": {
       "get": {
         "tags": [
           "ServiceTypes"
-        ],
-        "parameters": [
-          {
-            "name": "version",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
         ],
         "responses": {
           "400": {
@@ -719,7 +657,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     }
   },
@@ -992,6 +935,14 @@
             "type": "string"
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "Access token from POST /api/v1/authentication/login.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   },

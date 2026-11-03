@@ -1,6 +1,7 @@
 ﻿using Keyloop.API.Handlers;
 using Keyloop.API.HealthChecks;
 using Keyloop.API.HostedServices;
+using Keyloop.API.OpenApi;
 using Keyloop.API.Services;
 using Keyloop.Application;
 using Keyloop.Application.Abstractions;
@@ -34,7 +35,12 @@ public static class ServiceCollectionExtensions
                 new UrlSegmentApiVersionReader(),
                 new HeaderApiVersionReader("X-Api-Version"));
         }).AddMvc();
-        services.AddOpenApi();
+        services.AddOpenApi(options =>
+        {
+            options.AddDocumentTransformer<BearerSecurityDocumentTransformer>();
+            options.AddDocumentTransformer<ApiVersionPathTransformer>();
+            options.AddOperationTransformer<AuthorizedOperationTransformer>();
+        });
         services.AddHealthChecks()
             .AddCheck<SqlServerHealthCheck>("sql", tags: ["ready"]);
 

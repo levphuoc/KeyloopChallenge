@@ -33,10 +33,13 @@ public sealed class DatabaseInitializationHostedService(
         if (options.Seed)
         {
             var summary = await DatabaseSeeder.SeedAsync(context, timeProvider, cancellationToken);
+            var connection = context.Database.GetDbConnection();
             logger.LogInformation(
-                "Database ready: {Dealerships} dealerships, {ServiceTypes} service types, " +
-                "{ServiceBays} bays, {Technicians} technicians, {Customers} customers, " +
-                "{Vehicles} vehicles, {Appointments} appointments.",
+                "Database ready on {DataSource}/{Database}: {Dealerships} dealerships, " +
+                "{ServiceTypes} service types, {ServiceBays} bays, {Technicians} technicians, " +
+                "{Customers} customers, {Vehicles} vehicles, {Appointments} appointments.",
+                connection.DataSource,
+                connection.Database,
                 summary.Dealerships,
                 summary.ServiceTypes,
                 summary.ServiceBays,

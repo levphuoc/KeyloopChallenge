@@ -35,6 +35,7 @@ No custom client UI is included. The client contract is exposed through OpenAPI,
 ```powershell
 dotnet tool restore
 dotnet restore
+dotnet build KeyloopChallenge.sln
 dotnet run --project Keyloop.API --launch-profile http
 ```
 
@@ -193,6 +194,7 @@ Assumptions kept deliberately small:
 - The API is a staff-facing tool: any authenticated user may act for any customer.
 - Appointments are single-day; there is no holiday calendar or multi-day work order.
 - There is no payment, notification, parts inventory or customer-facing authentication in this scenario.
+- Customers, vehicles, bays and technicians are seeded reference data. Customer/vehicle/master-data CRUD is out of scope; the API focuses on booking and availability.
 - Dealership time zones are stored as Windows time-zone IDs because the development database and host are Windows.
 - The delivered client contract is the OpenAPI document plus the `.http`/PowerShell examples; Swagger UI is the manual test client for Development.
 
@@ -367,7 +369,7 @@ dotnet run --project Keyloop.API --launch-profile http
 
 I used an AI coding assistant as a pair-programming and review aid, not as an unreviewed code generator. The collaboration followed the same phases as the commits:
 
-1. **Analysis and planning.** The assistant read the existing Clean Architecture scaffold and the assessment PDF, identified the missing scheduler path and proposed a phased plan. I chose Scenario A, the endpoint scope, LocalDB and per-phase commits before implementation started.
+1. **Analysis and planning.** The assistant read the existing Clean Architecture scaffold and the assessment PDF, identified the missing scheduler path and proposed a phased plan. During design I used it to compare per-bay locks, row-version retries and a dealership-level application lock, and to challenge the API scope. I chose Scenario A, the final concurrency design, LocalDB and per-phase commits before implementation started.
 2. **Domain and application.** We added the appointment navigation properties, availability/cancel/reference use cases and telemetry names. I reviewed each contract and kept business rules in the domain rather than controllers.
 3. **Infrastructure.** The assistant drafted EF configurations, the scheduler implementation, seed data and the migration. I verified the generated SQL schema, the indexes and the seeded counts directly in LocalDB.
 4. **API and observability.** Controllers, ProblemDetails mappings, health checks, Serilog and OpenTelemetry were added. The smoke test was run against a real LocalDB instance, not just mocks.
@@ -401,7 +403,7 @@ Natural next steps: appointment rescheduling, a list/search endpoint with pagina
 ## Documentation
 
 - [`docs/SYSTEM_DESIGN.md`](docs/SYSTEM_DESIGN.md) — architecture, data model, sequence diagrams, concurrency, observability, trade-offs.
-- [`docs/VIDEO_SCRIPT.md`](docs/VIDEO_SCRIPT.md) — 7–9 minute walkthrough script.
+- [`docs/VIDEO_SCRIPT.md`](docs/VIDEO_SCRIPT.md) — 8–10 minute walkthrough script.
 - [`docs/DEMO.md`](docs/DEMO.md) — verified smoke-test transcript.
 - [`docs/openapi.json`](docs/openapi.json) — committed OpenAPI 3 document.
 - [`Keyloop.API/Keyloop.API.http`](Keyloop.API/Keyloop.API.http) — ready-to-run HTTP requests.

@@ -1,6 +1,6 @@
 # Video Script — Unified Service Scheduler
 
-**Target length:** 7–9 minutes  
+**Target length:** 8–10 minutes  
 **Scenario:** A — book a service appointment only when a bay and a qualified technician are free.
 
 The script is written for a screen recording with three windows: terminal, editor showing key files, and browser/SQL client. Commands are PowerShell, matching the development environment.
@@ -257,7 +257,7 @@ Passed! - Failed: 0, Passed: 41, Skipped: 0, Total: 41
 
 ---
 
-## 7:45–8:45 — Observability and close
+## 7:45–8:30 — Observability
 
 **On screen:** terminal output of request logs; optionally enable the console exporter.
 
@@ -278,8 +278,18 @@ Show briefly:
 - `docs/openapi.json` — committed contract.
 - `Keyloop.API/Keyloop.API.http` — runnable requests.
 
+---
+
+## 8:30–9:45 — AI collaboration, learnings and close
+
 **Narration:**
 
+> I used AI as a pair programmer, not an autopilot. In the design phase I asked it to compare concurrency options, challenge the data model and list failure modes. I chose the final design: a dealership-scoped application lock, one transaction per command, a domain allocator and a small create/get/cancel API.
+>
+> During delivery I used AI for boilerplate, tests and documentation, but I reviewed every diff. Verification was deliberate: build with zero warnings, 41 xUnit tests, the PowerShell smoke test against LocalDB, the generated OpenAPI document and seeded SQL counts. The real run exposed three integration issues — the EF retry strategy versus explicit transactions, a duplicate DbContext factory, and middleware order. I had the AI propose fixes, then re-ran the build, tests and smoke test after each one.
+>
+> What I learned: availability is the easy part; correctness under concurrency is the hard part. Time-zone boundaries and keeping transaction, audit and exception ordering correct were the main challenges. If I extended this, I would add SQL Server integration tests in CI, rescheduling, and per-dealership authorization.
+>
 > The design document explains the allocation invariant, the dealership-level lock, the availability algorithm, the seed model and the trade-offs I deliberately did not take on, such as payments, notifications, holiday calendars and customer-scoped authorization.
 >
 > To summarize: Scenario A is complete end to end, with a correct concurrency story, persistent confirmation, real-time availability, automated tests and a client contract that can be generated or exercised immediately.

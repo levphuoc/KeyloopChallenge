@@ -28,6 +28,7 @@ This implementation is the backend. A client can be generated from [`openapi.jso
 - Payments, invoicing, parts availability or notifications.
 - Multi-day work orders, holiday calendars or variable daily hours.
 - Rescheduling in place (cancel and rebook works today).
+- Customer, vehicle or master-data CRUD; reference data is seeded for the demo.
 - A custom UI.
 
 ## 3. Architecture
@@ -77,6 +78,29 @@ Dependency direction is inward: Domain has no EF Core, ASP.NET Core or MediatR r
 | `DatabaseSeeder` | Idempotent demo data. |
 | `GlobalExceptionHandler` | Maps domain/validation exceptions to RFC 7807 responses. |
 | `SqlServerHealthCheck` | Readiness `SELECT 1`. |
+
+### Technology choices
+
+| Choice | Why |
+|---|---|
+| .NET 9 / ASP.NET Core | Built-in DI, authentication, validation, health checks and OpenAPI; fast and cross-platform. |
+| Clean Architecture + MediatR | Keeps booking rules out of controllers; pipeline behaviors centralize validation, transactions and auditing. |
+| EF Core 9 + SQL Server | Relational constraints, migrations, projections and transaction-scoped `sp_getapplock`; LocalDB gives a zero-setup demo. |
+| FluentValidation | Declarative request rules that are easy to unit test. |
+| JWT bearer | Stateless authentication for a staff-facing API. |
+| Serilog + OpenTelemetry | Structured request logs plus traces and metrics without vendor lock-in. |
+| xUnit + EF InMemory | Fast deterministic tests for domain and scheduler logic; real SQL behavior is covered by the smoke test. |
+| OpenAPI + Swagger UI | Executable client contract and a manual test client without building a UI. |
+
+### Quality attributes
+
+| Attribute | Design response |
+|---|---|
+| Scalability | Stateless API; per-dealership locks let different dealerships book in parallel; indexed overlap scans; read projections. |
+| Performance | Availability scans one day in 30-minute steps; overlap queries are indexed; reads use `AsNoTracking`. |
+| Reliability | One transaction per command; application lock protects allocation; idempotent cancel; readiness check; stable problem codes. |
+| Maintainability | Domain rules isolated; small handlers; versioned API; 41 tests and a repeatable seed. |
+| Observability | Serilog request logs, OpenTelemetry traces/metrics, health probes and stable error codes. |
 
 ## 4. Data model
 
@@ -320,17 +344,30 @@ Natural next features: rescheduling, a paged appointment list, holiday calendars
 
 ## 14. AI collaboration
 
-AI was used as a pair-programming aid for:
+### Design phase
 
-- mapping the assessment scenario onto the existing Clean Architecture solution,
-- generating repetitive EF configurations, DTOs, tests and documentation drafts,
-- reviewing concurrency ordering and the transaction/audit pipeline,
-- proposing edge cases for availability and resource saturation.
+AI was used as a design reviewer, not the decision maker. I asked it to:
 
-All generated code was compiled, tested and exercised against LocalDB. Review caught three runtime issues that were fixed before delivery:
+- compare concurrency options for the allocation invariant: application lock, row-version retry and serializable transaction;
+- challenge the data model and API contract against Scenario A;
+- list failure modes for concurrent bookings and time-zone boundaries;
+- propose a testing strategy.
 
-1. EF Core retrying execution strategy conflicted with explicit transactions.
+I selected the final design: a dealership-scoped `sp_getapplock`, one transaction per command, a domain `ResourceAllocator` and a create/get/cancel API. Suggestions that added infrastructure without a requirement were rejected.
+
+### Delivery and verification
+
+AI also drafted repetitive EF configurations, DTOs, tests and documentation. I reviewed every change and verified it by:
+
+- building the solution with zero warnings,
+- running the full xUnit suite (41 tests),
+- running the PowerShell smoke test against LocalDB,
+- inspecting the generated OpenAPI document and seeded SQL counts.
+
+The real run exposed three integration issues that were fixed before delivery:
+
+1. EF Core's retrying execution strategy conflicted with explicit transactions.
 2. The DbContext factory registered a second, differently configured context.
 3. Serilog request logging was outside the exception handler, producing misleading 500 logs for handled 409s.
 
-The architectural choices, business rules, seed credentials, scope decisions and final verification remain the author's.
+The architectural choices, business rules, scope decisions and final verification remain the author's.

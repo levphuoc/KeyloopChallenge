@@ -1,4 +1,4 @@
-@host = https://localhost:7054
+@host = http://localhost:5110
 @dealershipId = 1
 @vehicleId = 1
 @serviceTypeId = 1

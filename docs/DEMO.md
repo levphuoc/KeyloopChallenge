@@ -9,7 +9,7 @@ The automated unit suite covers domain and scheduler rules; this transcript cove
 ## 1. Prerequisites
 
 - Windows with the .NET SDK installed.
-- SQL Server LocalDB available as `(localdb)\MSSQLLocalDB`.
+- SQL Server LocalDB available as `(localdb)\MSSQLLocalDB` (default), or another instance such as `.\SQLEXPRESS` selected with `ConnectionStrings__DefaultConnection`.
 - Repository restored and built:
 
 ```powershell
@@ -36,7 +36,7 @@ Expected startup log:
 
 ```text
 Applying database migrations.
-Database ready: 3 dealerships, 5 service types, 9 bays, 9 technicians, 6 customers, 7 vehicles, 1 appointments.
+Database ready on (localdb)\mssqllocaldb/KeyloopChallenge: 3 dealerships, 5 service types, 9 bays, 9 technicians, 6 customers, 7 vehicles, 1 appointments.
 Now listening on: http://localhost:5110
 ```
 
@@ -173,13 +173,14 @@ AVAILABILITY AFTER CANCEL => 17 slots
 
 Cancelling frees the bay and technician immediately, and calling cancel twice still returns `Cancelled`.
 
-### 3.5 OpenAPI
+### 3.5 OpenAPI and Swagger UI
 
 ```text
-OPENAPI => HTTP 200, saved 24054 bytes
+SWAGGER UI => HTTP 200 at /swagger
+OPENAPI    => HTTP 200 at /openapi/v1.json
 ```
 
-The document is served at `/openapi/v1.json` and committed as [`openapi.json`](openapi.json).
+Swagger UI is served at `/swagger` in Development; the root URL redirects there. It uses the JWT bearer scheme, so the login token can be pasted into **Authorize** (raw token, without the `Bearer ` prefix). The document is committed as [`openapi.json`](openapi.json).
 
 ---
 
@@ -232,7 +233,7 @@ To return to a clean seed state:
 # stop the API first
 $env:DOTNET_ROLL_FORWARD = 'LatestMajor'
 dotnet ef database drop --force --project Keyloop.Infrastructure --startup-project Keyloop.API
-dotnet run --project Keyloop.API
+dotnet run --project Keyloop.API --launch-profile http
 ```
 
 The Development hosted service migrates and seeds on startup. Stop the API after the startup log reports the seed counts; the database remains ready for the next run.

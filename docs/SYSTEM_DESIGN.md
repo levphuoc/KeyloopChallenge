@@ -9,7 +9,7 @@
 
 The confirmed appointment must be persisted with every resource reference, and availability must be checked in real time.
 
-This implementation is the backend. A client can be generated from [`openapi.json`](openapi.json) or driven with [`Keyloop.API.http`](../Keyloop.API/Keyloop.API.http) and [`smoke-test.ps1`](../scripts/smoke-test.ps1). The Blazor project in the solution remains untouched scaffolding and is not part of the delivered scenario.
+This implementation is the backend. A client can be generated from [`openapi.json`](openapi.json) or driven with Swagger UI, [`Keyloop.API.http`](../Keyloop.API/Keyloop.API.http) and [`smoke-test.ps1`](../scripts/smoke-test.ps1). Swagger UI is served at `/swagger` in Development and uses the same JWT bearer scheme as the API.
 
 ## 2. Goals and non-goals
 
@@ -249,7 +249,7 @@ Availability is advisory: it can change before the create request. The create pa
 
 ## 9. Persistence and seeding
 
-- EF Core 9 with SQL Server LocalDB for development.
+- EF Core 9 with SQL Server LocalDB for development; the connection string can be overridden with `ConnectionStrings__DefaultConnection` to use an instance such as `.\SQLEXPRESS`.
 - One migration, `InitialCreate`, creates the scheduler tables, indexes and check constraints.
 - `DatabaseInitializationHostedService` runs only when `Database:AutoMigrate`/`Database:Seed` are enabled (Development defaults).
 - `DatabaseSeeder` returns early if dealerships exist, making startup repeatable.

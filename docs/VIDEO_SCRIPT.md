@@ -17,7 +17,7 @@ The script is written for a screen recording with three windows: terminal, edito
 >
 > I implemented the backend end to end: domain rules, use cases, EF Core persistence, SQL Server migration and seed data, a versioned REST API, concurrency protection, tests, health checks and observability.
 >
-> The client side is intentionally stubbed through OpenAPI, a `.http` collection and a PowerShell smoke test. There is no custom UI in scope.
+> The client side is intentionally stubbed through OpenAPI, Swagger UI, a `.http` collection and a PowerShell smoke test. There is no custom UI in scope.
 
 ---
 
@@ -46,7 +46,7 @@ The script is written for a screen recording with three windows: terminal, edito
 
 ```powershell
 dotnet tool restore
-dotnet run --project Keyloop.API
+dotnet run --project Keyloop.API --launch-profile http
 ```
 
 **Narration:**
@@ -57,8 +57,8 @@ Show the startup log:
 
 ```text
 Applying database migrations.
-Database ready: 3 dealerships, 5 service types, 9 bays, 9 technicians,
-6 customers, 7 vehicles, 1 appointments.
+Database ready on (localdb)\mssqllocaldb/KeyloopChallenge: 3 dealerships,
+5 service types, 9 bays, 9 technicians, 6 customers, 7 vehicles, 1 appointments.
 Now listening on: http://localhost:5110
 ```
 

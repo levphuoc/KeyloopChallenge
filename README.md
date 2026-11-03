@@ -2,7 +2,7 @@
 
 Backend implementation of **Scenario A** for the Keyloop challenge. An authenticated advisor can search availability and book a service appointment only when **both a service bay and a qualified technician** are free for the whole service duration. Confirmed appointments are persisted in SQL Server and can be read or cancelled.
 
-No custom client UI is included. The client contract is exposed through OpenAPI, a `.http` request collection and a PowerShell smoke test.
+No custom client UI is included. The client contract is exposed through OpenAPI, Swagger UI, a `.http` request collection and a PowerShell smoke test.
 
 ---
 
@@ -27,7 +27,7 @@ No custom client UI is included. The client contract is exposed through OpenAPI,
 ### Prerequisites
 
 - Windows with **.NET SDK 9 or newer** (the solution targets `net9.0`; `Directory.Build.props` sets `RollForward=LatestMajor` so an installed .NET 10 runtime works too).
-- **SQL Server LocalDB** (`(localdb)\MSSQLLocalDB`).
+- **SQL Server LocalDB** (`(localdb)\MSSQLLocalDB`) — the default. An existing SQL Server instance such as `.\SQLEXPRESS` also works; see [Use SQL Server Express instead of LocalDB](#use-sql-server-express-instead-of-localdb).
 - The `dotnet-ef` tool is pinned in `.config/dotnet-tools.json`.
 
 ### Run
@@ -35,10 +35,10 @@ No custom client UI is included. The client contract is exposed through OpenAPI,
 ```powershell
 dotnet tool restore
 dotnet restore
-dotnet run --project Keyloop.API
+dotnet run --project Keyloop.API --launch-profile http
 ```
 
-The API starts at `http://localhost:5110` (and `https://localhost:7054` when the HTTPS launch profile is used). In Development it automatically applies migrations and seeds the demo data before it starts listening.
+The API starts at `http://localhost:5110`. In Development it automatically applies migrations and seeds the demo data before it starts listening. The startup log prints the actual database that was migrated and seeded.
 
 Verify:
 
@@ -47,7 +47,9 @@ Invoke-WebRequest http://localhost:5110/health/live
 Invoke-WebRequest http://localhost:5110/health/ready
 ```
 
-OpenAPI is available at <http://localhost:5110/openapi/v1.json>. A saved copy is committed as [`docs/openapi.json`](docs/openapi.json).
+Swagger UI is available at <http://localhost:5110/swagger> (the root URL redirects to it in Development). The raw OpenAPI document is at <http://localhost:5110/openapi/v1.json>; a saved copy is committed as [`docs/openapi.json`](docs/openapi.json).
+
+To call authenticated endpoints in Swagger, log in with `POST /api/v1/authentication/login`, copy the `accessToken` value, click **Authorize**, and paste the raw token (without the `Bearer ` prefix).
 
 ### One-command smoke test
 
@@ -192,7 +194,7 @@ Assumptions kept deliberately small:
 - Appointments are single-day; there is no holiday calendar or multi-day work order.
 - There is no payment, notification, parts inventory or customer-facing authentication in this scenario.
 - Dealership time zones are stored as Windows time-zone IDs because the development database and host are Windows.
-- The Web project in the solution is untouched Visual Studio scaffolding; the client contract is the OpenAPI document plus `.http`/PowerShell examples.
+- The delivered client contract is the OpenAPI document plus the `.http`/PowerShell examples; Swagger UI is the manual test client for Development.
 
 ---
 
@@ -295,28 +297,69 @@ The HTTP acceptance path is exercised by `scripts/smoke-test.ps1` and the manual
 
 ## Database operations
 
-Connection string (Development):
+### Connection and startup behaviour
+
+The default connection string is in [`Keyloop.API/appsettings.json`](Keyloop.API/appsettings.json):
 
 ```text
 Server=(localdb)\mssqllocaldb;Database=KeyloopChallenge;Trusted_Connection=True;TrustServerCertificate=True
 ```
 
-Apply migrations manually:
+`Trusted_Connection=True` uses Windows integrated authentication, so no SQL password is stored in the repository. If an instance requires SQL authentication, supply `User Id`/`Password` through `ConnectionStrings__DefaultConnection` or .NET user-secrets instead of committing it to `appsettings.json`.
+
+[`Keyloop.API/appsettings.Development.json`](Keyloop.API/appsettings.Development.json) enables automatic database setup:
+
+| Key | Development | Base default |
+|---|---|---|
+| `Database:AutoMigrate` | `true` | `false` |
+| `Database:Seed` | `true` | `false` |
+
+On startup, `DatabaseInitializationHostedService` calls `MigrateAsync()` and then `DatabaseSeeder.SeedAsync()`. The seeder is idempotent and stops if a dealership already exists. Seed data is C# in [`DatabaseSeeder.cs`](Keyloop.Infrastructure/Persistence/Seed/DatabaseSeeder.cs), not JSON: it creates related dealerships, bays, technicians, qualifications, customers, vehicles and a demo appointment with generated IDs and a future working-day time. No separate JSON/CSV seed file is required.
+
+The startup log prints the actual server and database, for example:
+
+```text
+Database ready on (localdb)\MSSQLLocalDB/KeyloopChallenge: 3 dealerships, ...
+```
+
+### Use SQL Server Express instead of LocalDB
+
+Override the connection string at run time (the double underscore maps to `:`):
 
 ```powershell
+$env:ASPNETCORE_ENVIRONMENT = 'Development'
+$env:ConnectionStrings__DefaultConnection = 'Server=.\SQLEXPRESS;Database=KeyloopChallenge;Trusted_Connection=True;TrustServerCertificate=True'
+dotnet run --project Keyloop.API --launch-profile http
+```
+
+Alternatively, change the `DefaultConnection` value in `appsettings.json`. On the first run the API creates the database, applies the migration and seeds it.
+
+### Verify the seeded data
+
+```powershell
+sqlcmd -S "(localdb)\MSSQLLocalDB" -d KeyloopChallenge -Q "SET NOCOUNT ON; SELECT (SELECT COUNT(*) FROM Dealerships) AS Dealerships, (SELECT COUNT(*) FROM ServiceTypes) AS ServiceTypes, (SELECT COUNT(*) FROM ServiceBays) AS Bays, (SELECT COUNT(*) FROM Technicians) AS Technicians, (SELECT COUNT(*) FROM Customers) AS Customers, (SELECT COUNT(*) FROM Vehicles) AS Vehicles, (SELECT COUNT(*) FROM Appointments) AS Appointments;"
+```
+
+For `.\SQLEXPRESS`, replace `-S "(localdb)\MSSQLLocalDB"` with `-S ".\SQLEXPRESS"`.
+
+### Apply migrations manually
+
+```powershell
+$env:ASPNETCORE_ENVIRONMENT = 'Development'
 $env:DOTNET_ROLL_FORWARD = 'LatestMajor'
 dotnet ef database update --project Keyloop.Infrastructure --startup-project Keyloop.API
 ```
 
-Reset the demo database:
+### Reset and reseed
 
 ```powershell
+$env:ASPNETCORE_ENVIRONMENT = 'Development'
 $env:DOTNET_ROLL_FORWARD = 'LatestMajor'
 dotnet ef database drop --force --project Keyloop.Infrastructure --startup-project Keyloop.API
-dotnet run --project Keyloop.API
+dotnet run --project Keyloop.API --launch-profile http
 ```
 
-`Database:AutoMigrate` and `Database:Seed` are enabled only in `appsettings.Development.json`; both default to `false` in `appsettings.json`.
+`dotnet ef` and `dotnet run` must see the same connection string. If you used the `ConnectionStrings__DefaultConnection` override above, set it in the same terminal before dropping.
 
 ---
 

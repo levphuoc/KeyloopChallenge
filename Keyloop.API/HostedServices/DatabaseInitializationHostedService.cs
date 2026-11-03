@@ -27,7 +27,7 @@ public sealed class DatabaseInitializationHostedService(
         if (options.AutoMigrate)
         {
             logger.LogInformation("Applying database migrations.");
-            await context.Database.MigrateAsync(cancellationToken);
+            await DatabaseMigrator.MigrateAsync(context, logger, cancellationToken);
         }
 
         if (options.Seed)

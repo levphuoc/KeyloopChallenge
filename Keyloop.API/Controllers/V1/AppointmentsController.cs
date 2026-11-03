@@ -3,6 +3,7 @@ using Keyloop.Application.DTOs.Scheduler;
 using Keyloop.Application.Features.Appointments.Commands.CancelAppointment;
 using Keyloop.Application.Features.Appointments.Commands.CreateAppointment;
 using Keyloop.Application.Features.Appointments.Queries.GetAppointmentById;
+using Keyloop.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,7 +37,9 @@ public sealed class AppointmentsController(ISender sender) : ApiControllerBase
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
         var appointment = await sender.Send(new GetAppointmentByIdQuery(id), cancellationToken);
-        return appointment is null ? NotFound() : Ok(appointment);
+        if (appointment is null)
+            throw new NotFoundException("Appointment", id);
+        return Ok(appointment);
     }
 
     [HttpPost("{id:guid}/cancel")]

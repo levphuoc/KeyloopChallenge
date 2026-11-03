@@ -19,7 +19,9 @@ public sealed class DealershipsController(ISender sender) : ApiControllerBase
     public async Task<IActionResult> GetAvailability(
         int id,
         [FromQuery] int serviceTypeId,
-        [FromQuery] DateOnly date,
+        [FromQuery] DateOnly? date,
         CancellationToken cancellationToken) =>
-        Ok(await sender.Send(new GetAvailabilityQuery(id, serviceTypeId, date), cancellationToken));
+        Ok(await sender.Send(
+            new GetAvailabilityQuery(id, serviceTypeId, date ?? DateOnly.FromDateTime(DateTime.Today)),
+            cancellationToken));
 }
